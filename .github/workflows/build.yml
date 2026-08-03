@@ -12,10 +12,6 @@ env:
 jobs:
   build:
     name: linux-cachyos
-    strategy:
-      matrix:
-        toolchain: [gcc, clang]
-
     runs-on: ubuntu-latest
     container: archlinux:base-devel
     steps:
@@ -43,7 +39,7 @@ jobs:
           sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc) -l$(nproc)"/g' /etc/makepkg.conf
 
           # Setup a packager name to indicate that kernel has built with CI
-          sed -i 's/#PACKAGER=".*"/PACKAGER="CachyOS GitHub Actions"/g' /etc/makepkg.conf
+          sed -i 's/#PACKAGER=".*"/PACKAGER="stranger74x GitHub Actions"/g' /etc/makepkg.conf
 
           # Setup ccache
           sed -i 's|!ccache|ccache|' /etc/makepkg.conf
@@ -53,21 +49,17 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ env.CCACHE_DIR }}
-        key: ccache-${{ matrix.toolchain }}-${{ github.run_id }}
+        key: ccache-ozel-clang-${{ github.run_id }}
         restore-keys: |
-          ccache-${{ matrix.toolchain }}
-    - name: Build package (${{ matrix.toolchain }})
+          ccache-ozel-clang
+    - name: Build package (ozel-clang)
       id: makepkg
-      env:
-        _build_zfs: yes
-        _build_nvidia_open: yes
-        _use_llvm_lto: ${{ matrix.toolchain == 'gcc' && 'none' || 'thin' }}
       run: |
           cd "linux-cachyos"
-          sudo -H -E -u builder makepkg --skipchecksums --syncdeps --noconfirm
+          sudo -H -E -u builder makepkg --syncdeps --skippgpcheck --noconfirm
     - name: Upload package to artifacts
       id: upload
       uses: actions/upload-artifact@v4
       with:
-        name: linux-cachyos-${{ matrix.toolchain }}
+        name: linux-cachyos-ozel-clang
         path: linux-cachyos/*.pkg.tar.zst*

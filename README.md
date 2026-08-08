@@ -40,7 +40,7 @@ Disabling it doesn't remove durability — the kernel still flushes the cache, j
 Recommended for most people — build it on the **official** CachyOS repo instead of mine:
 
 1. Clone the official `linux-cachyos` repo and pick your variant (e.g. `-lts`, `-bore`).
-2. Put the patch file in that variant's folder, next to its `PKGBUILD`.
+2. Download the patch for [standart](./linux-cachyos/nvme-kingston-kc3000-disable-fua.patch) or [lts](./linux-cachyos/nvme-kingston-kc3000-disable-fua.patch) version and place it in that variant's folder, next to its `PKGBUILD`.
 3. Add the patch filename to the PKGBUILD's `source=()` list.
 4. Run `updpkgsums`.
 5. `makepkg` as usual.
